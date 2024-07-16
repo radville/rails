@@ -22,8 +22,9 @@ module Rails
 
       desc "routes", "List all the defined routes"
       def perform(*)
+        require "action_dispatch/routing/mapper"
+        ActionDispatch::Routing::Mapper.route_source_locations = true
         boot_application!
-        Rails.application.reload_routes_unless_loaded
         require "action_dispatch/routing/inspector"
 
         say inspector.format(formatter, routes_filter)
