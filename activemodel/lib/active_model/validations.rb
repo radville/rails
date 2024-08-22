@@ -341,11 +341,11 @@ module ActiveModel
     #   person.valid?(:new) # => false
     def valid?(context = nil)
       current_context = validation_context
-      context_for_validation.context = context
+      context_for_validation[:context] = context
       errors.clear
       run_validations!
     ensure
-      context_for_validation.context = current_context
+      context_for_validation[:context] = current_context
     end
 
     alias_method :validate, :valid?
@@ -433,16 +433,16 @@ module ActiveModel
     #   person.valid?(:new)    #=> false
     #   person.valid?(:custom) #=> true
     def validation_context
-      context_for_validation.context
+      context_for_validation[:context]
     end
 
   private
     def validation_context=(context)
-      context_for_validation.context = context
+      context_for_validation[:context] = context
     end
 
     def context_for_validation
-      @context_for_validation ||= ValidationContext.new
+      @context_for_validation ||= Hash.new
     end
 
     def init_internals
@@ -479,10 +479,6 @@ module ActiveModel
       errors = @model.errors.full_messages.join(", ")
       super(I18n.t(:"#{@model.class.i18n_scope}.errors.messages.model_invalid", errors: errors, default: :"errors.messages.model_invalid"))
     end
-  end
-
-  class ValidationContext # :nodoc:
-    attr_accessor :context
   end
 end
 
